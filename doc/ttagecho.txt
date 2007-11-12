@@ -41,10 +41,10 @@ Contents~
     plugin/ttagecho.vim
         g:ttagecho_parentheses_patterns ... |g:ttagecho_parentheses_patterns|
         g:ttagecho_balloon_patterns ....... |g:ttagecho_balloon_patterns|
-        g:ttagecho_substitute ............. |g:ttagecho_substitute|
         g:ttagecho_restore_showmode ....... |g:ttagecho_restore_showmode|
-        g:ttagecho_more_tags .............. |g:ttagecho_more_tags|
         g:ttagecho_balloon_limit .......... |g:ttagecho_balloon_limit|
+        g:ttagecho_tagwidth ............... |g:ttagecho_tagwidth|
+        g:ttagecho_matchbeginning ......... |g:ttagecho_matchbeginning|
         :TTagecho ......................... |:TTagecho|
         :TTagechoAll ...................... |:TTagechoAll|
         :TTagechoWord ..................... |:TTagechoWord|
@@ -67,32 +67,32 @@ g:ttagecho_parentheses_patterns (default: [])
     information when moving over parantheses for these filetypes.
 
                                                     *g:ttagecho_balloon_patterns*
-g:ttagecho_balloon_patterns    (default: g:ttagecho_parentheses_patterns )
+g:ttagecho_balloon_patterns    (default: g:ttagecho_parentheses_patterns)
     Set 'balloonexpr' for buffers that match these patterns.
-
-                                                    *g:ttagecho_substitute*
-g:ttagecho_substitute          (default: {})
-    Filter the expression through |substitute()| for these filetypes. 
-    This applies only if the tag cmd field (see |taglist()|) is used.
 
                                                     *g:ttagecho_restore_showmode*
 g:ttagecho_restore_showmode    (default: 0)
-    If 'showmode' is set, |ttagecho#OverParanthesis()| will temporarily 
-    unset the option when triggered in insert mode. The original value 
-    will be restored on the next CursorHold(I) events.
+    If 'showmode' is set, |ttagecho#OverParanthesis()| will 
+    temporarily unset the option when triggered in insert mode. The 
+    original value will be restored on the next CursorHold(I) events.
     Set this variable to -1, if you don't want this to happen. In this 
-    case you might need to set 'cmdheight' to something greater than 1.
-
-                                                    *g:ttagecho_more_tags*
-g:ttagecho_more_tags           (default: '')
-    A comma-separated list of additional tag files (see 'tags') that will 
-    be used, when invoked with a <bang>. Can also be buffer-local.
-    This variable can be used to scan voluminous tag files (eg general 
-    SDK/standard library tags) only when really needed while normally 
-    using the project tags only.
+    case you might need to set 'cmdheight' to something greater than 
+    1.
 
                                                     *g:ttagecho_balloon_limit*
-g:ttagecho_balloon_limit       (default: &lines  )
+g:ttagecho_balloon_limit       (default: '&lines * 2 / 3')
+    The number of items to be displayed in the balloon popup. It will be 
+    evaluated with |eval()|, which is why it can also be a vim expression.
+
+                                                    *g:ttagecho_tagwidth*
+g:ttagecho_tagwidth            (default: '&co / 3')
+    The width of the tag "column". It will be evaluated with |eval()|, which 
+    is why it can also be a vim expression.
+
+                                                    *g:ttagecho_matchbeginning*
+g:ttagecho_matchbeginning      (default: 0)
+    If true, match only the beginning of a tag (i.e. don't add '$' to 
+    the regexp).
 
                                                     *:TTagecho*
 TTagecho[!] [TAGS_RX]
@@ -116,21 +116,27 @@ TTagechoWords[!]
 autoload/ttagecho.vim~
 
                                                     *ttagecho#Expr()*
-ttagecho#Expr(rx, ...)
+ttagecho#Expr
+    Return a string representing the tags matching rx.
 
                                                     *ttagecho#Echo()*
-ttagecho#Echo(rx, many_lines, bang)
+ttagecho#Echo
+    Echo the tag(s) matching rx.
 
                                                     *ttagecho#EchoWord()*
-ttagecho#EchoWord(bang)
+ttagecho#EchoWord
+    Echo one match for the tag under cursor.
 
                                                     *ttagecho#EchoWords()*
-ttagecho#EchoWords(bang)
+ttagecho#EchoWords
+    Echo all matches for the tag under cursor.
 
                                                     *ttagecho#OverParanthesis()*
-ttagecho#OverParanthesis(mode)
+ttagecho#OverParanthesis
+    Echo the tag in front of an opening round parenthesis.
 
                                                     *ttagecho#Balloon()*
-ttagecho#Balloon()
+ttagecho#Balloon
+    Return tag information for the tag under the mouse pointer (see 'balloonexpr')
 
 
