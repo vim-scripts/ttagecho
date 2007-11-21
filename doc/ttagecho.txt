@@ -116,27 +116,27 @@ TTagechoWords[!]
 autoload/ttagecho.vim~
 
                                                     *ttagecho#Expr()*
-ttagecho#Expr
+ttagecho#Expr(rx, ?many_lines=0, ?bang=0, ?compact=0)
     Return a string representing the tags matching rx.
 
                                                     *ttagecho#Echo()*
-ttagecho#Echo
+ttagecho#Echo(rx, many_lines, bang)
     Echo the tag(s) matching rx.
 
                                                     *ttagecho#EchoWord()*
-ttagecho#EchoWord
+ttagecho#EchoWord(bang)
     Echo one match for the tag under cursor.
 
                                                     *ttagecho#EchoWords()*
-ttagecho#EchoWords
+ttagecho#EchoWords(bang)
     Echo all matches for the tag under cursor.
 
                                                     *ttagecho#OverParanthesis()*
-ttagecho#OverParanthesis
+ttagecho#OverParanthesis(mode)
     Echo the tag in front of an opening round parenthesis.
 
                                                     *ttagecho#Balloon()*
-ttagecho#Balloon
+ttagecho#Balloon()
     Return tag information for the tag under the mouse pointer (see 'balloonexpr')
 
 

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2007-11-06.
-" @Revision:    0.2.112
+" @Last Change: 2007-11-21.
+" @Revision:    0.2.115
 " GetLatestVimScripts: 2055 0 ttagecho.vim
 
 if &cp || exists("loaded_ttagecho")
@@ -131,4 +131,7 @@ CHANGES:
 - g:ttagecho_substitute became g:tlib_tag_substitute
 - Removed support for: [bg]:ttagecho_more_tags (use [bg]:tlib_tags_extra 
 instead)
+
+0.4
+- Adapt for hookcursormoved >= 0.7
 
