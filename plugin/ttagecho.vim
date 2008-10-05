@@ -3,18 +3,21 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2007-11-21.
-" @Revision:    0.2.115
+" @Last Change: 2008-10-05.
+" @Revision:    0.5.121
 " GetLatestVimScripts: 2055 0 ttagecho.vim
 
 if &cp || exists("loaded_ttagecho")
     finish
 endif
-if !exists('g:loaded_tlib') || g:loaded_tlib < 20
-    echoerr 'tlib >= 0.20 is required'
-    finish
+if !exists('g:loaded_tlib') || g:loaded_tlib < 25
+    runtime plugin/02tlib.vim
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 25
+        echoerr 'tlib >= 0.25 is required'
+        finish
+    endif
 endif
-let loaded_ttagecho = 2
+let loaded_ttagecho = 5
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -134,4 +137,8 @@ instead)
 
 0.4
 - Adapt for hookcursormoved >= 0.7
+
+0.5
+- Make sure tlib is loaded even if it is installed in a different rtp-directory (thanks to ... sorry, cannot find the e-mail)
+- User tlib#notify#TrimMessage() (thanks to Erik Falor)
 

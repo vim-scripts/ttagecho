@@ -35,7 +35,7 @@ Suggested maps (to be set in ~/.vimrc): >
     noremap <Leader>g? :TTagechoWords!<cr>
 
 
-------------------------------------------------------------------------
+========================================================================
 Contents~
 
     plugin/ttagecho.vim
@@ -58,7 +58,7 @@ Contents~
         ttagecho#Balloon .................. |ttagecho#Balloon()|
 
 
-------------------------------------------------------------------------
+========================================================================
 plugin/ttagecho.vim~
 
                                                     *g:ttagecho_parentheses_patterns*
@@ -112,7 +112,7 @@ TTagechoWords[!]
     Show all matches for the word under cursor.
 
 
-------------------------------------------------------------------------
+========================================================================
 autoload/ttagecho.vim~
 
                                                     *ttagecho#Expr()*
@@ -140,3 +140,5 @@ ttagecho#Balloon()
     Return tag information for the tag under the mouse pointer (see 'balloonexpr')
 
 
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2007-11-19.
-" @Revision:    0.0.148
+" @Last Change: 2008-10-05.
+" @Revision:    0.0.155
 
 if &cp || exists("loaded_ttagecho_autoload")
     finish
@@ -63,6 +63,7 @@ function! s:FormatName(tag) "{{{3
     else
         let name = tlib#tag#Format(a:tag)
     endif
+    " TLogVAR a:tag, name
     return name
 endf
 
@@ -101,7 +102,9 @@ function! ttagecho#Echo(rx, many_lines, bang) "{{{3
         if a:many_lines != 0
             echo expr
         else
-            echo strpart(expr, 0, &columns - &fdc - 10)
+            echo tlib#notify#TrimMessage(expr)
+            " call tlib#notify#Echo(expr)
+            " echo strpart(expr, 0, &columns - &fdc - 10)
         endif
         echohl NONE
     endif
@@ -125,7 +128,7 @@ endf
 " Echo the tag in front of an opening round parenthesis.
 function! ttagecho#OverParanthesis(mode) "{{{3
     let line = strpart(getline('.'), 0, col('.') - 1)
-    let text = matchstr(line, '\a\+\ze\((.\{-}\)\?$')
+    let text = matchstr(line, '\w\+\ze\((.\{-}\)\?$')
     " TLogVAR text, line
     if &showmode && a:mode == 'i' && g:ttagecho_restore_showmode != -1 && &cmdheight == 1
         let g:ttagecho_restore_showmode = 1
