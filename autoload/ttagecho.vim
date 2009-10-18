@@ -1,10 +1,10 @@
 " ttagecho.vim
-" @Author:      Thomas Link (mailto:micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (mailto:micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2008-10-05.
-" @Revision:    0.0.155
+" @Last Change: 2009-08-09.
+" @Revision:    0.0.210
 
 if &cp || exists("loaded_ttagecho_autoload")
     finish
@@ -36,6 +36,12 @@ function! ttagecho#Expr(rx, ...) "{{{3
         " TLogVAR tag
         if many_lines != 0
             let lines = len(s:echo_tags)
+            if many_lines < 0
+                let not_compact = lines > 1
+                let many_lines = -many_lines
+            else
+                let not_compact = 1
+            endif
             if many_lines > 0 && many_lines < lines
                 let lines = many_lines
                 let extra = '...'
@@ -43,7 +49,7 @@ function! ttagecho#Expr(rx, ...) "{{{3
                 let extra = ''
             endif
             " TLogVAR many_lines, lines
-            let rv = map(range(lines), 's:FormatTag(v:val + 1, max_index, s:echo_tags[v:val], many_lines, compact)')
+            let rv = map(range(lines), 's:FormatTag(v:val + 1, max_index, s:echo_tags[v:val], not_compact, compact)')
             if !empty(extra)
                 call add(rv, extra)
             endif
@@ -71,7 +77,7 @@ endf
 function! s:FormatTag(index, max_index, tag, many_lines, compact) "{{{3
     let name = s:FormatName(a:tag)
     let wd = a:compact && !a:many_lines ? '' : '-'. eval(g:ttagecho_tagwidth)
-    " TLogVAR a:compact, a:max_index, wd
+    " TLogVAR a:compact, a:many_lines, a:max_index, wd
     let fmt  = '%s: %'. wd .'s | %s'
     if a:max_index == 1
         let rv = printf(fmt, a:tag.kind, name, fnamemodify(a:tag.filename, ":t"))
@@ -96,8 +102,10 @@ function! ttagecho#Echo(rx, many_lines, bang) "{{{3
     " TLogVAR a:rx, a:many_lines, a:bang
     let expr = ttagecho#Expr(a:rx, a:many_lines, a:bang)
     if empty(expr)
-        echo
+        redraw
+        " echo
     else
+        redraw
         echohl Type
         if a:many_lines != 0
             echo expr
@@ -127,9 +135,20 @@ endf
 
 " Echo the tag in front of an opening round parenthesis.
 function! ttagecho#OverParanthesis(mode) "{{{3
-    let line = strpart(getline('.'), 0, col('.') - 1)
-    let text = matchstr(line, '\w\+\ze\((.\{-}\)\?$')
-    " TLogVAR text, line
+    let line = getline('.')
+    let scol = col('.') - 1
+    let char = line[scol]
+    if char == ')'
+        let view = winsaveview()
+        call searchpair('(', '', ')', 'bW')
+        let scol = col('.') - 1
+        call winrestview(view)
+    endif
+    " TLogVAR scol
+    let line = strpart(line, 0, scol)
+    let chrx = s:GetCharRx() .'\+$'
+    let text = matchstr(line, chrx)
+    " TLogVAR char, chrx, text, line
     if &showmode && a:mode == 'i' && g:ttagecho_restore_showmode != -1 && &cmdheight == 1
         let g:ttagecho_restore_showmode = 1
         " TLogVAR g:ttagecho_restore_showmode
@@ -142,8 +161,28 @@ endf
 
 " Return tag information for the tag under the mouse pointer (see 'balloonexpr')
 function! ttagecho#Balloon() "{{{3
+    " TLogVAR v:beval_lnum, v:beval_col
     let line = getline(v:beval_lnum)
-    let text = matchstr(line, '\w*\%'. v:beval_col .'c\w*')
-    return ttagecho#Expr(s:WordRx(text), eval(g:ttagecho_balloon_limit), 0, 1)
+    let chrx = s:GetCharRx()
+    let text = matchstr(line, chrx .'*\%'. v:beval_col .'c'. chrx .'*')
+    " TLogVAR text
+    let balloon = ttagecho#Expr(s:WordRx(text), -eval(g:ttagecho_balloon_limit), 0, 1)
+    if !empty(balloon)
+        return balloon
+    elseif exists('b:ttagecho_bexpr') && !empty(b:ttagecho_bexpr)
+        return eval(b:ttagecho_bexpr)
+    else
+        return ''
+    endif
+endf
+
+
+function! s:GetCharRx() "{{{3
+    let chrx = tlib#var#Get('ttagecho_char_rx', 'wb', '')
+    if empty(chrx)
+        let chrx = get(g:ttagecho_char_rx, 'vim', '\w')
+    endif
+    " TLogVAR chrx
+    return chrx
 endf
 

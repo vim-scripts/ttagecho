@@ -1,10 +1,10 @@
 " ttagecho.vim -- Show current tag information
-" @Author:      Thomas Link (micathom AT gmail com?subject=[vim])
+" @Author:      Tom Link (micathom AT gmail com?subject=[vim])
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-10-28.
-" @Last Change: 2008-10-05.
-" @Revision:    0.5.121
+" @Last Change: 2009-08-09.
+" @Revision:    0.5.135
 " GetLatestVimScripts: 2055 0 ttagecho.vim
 
 if &cp || exists("loaded_ttagecho")
@@ -36,6 +36,16 @@ if !exists('g:ttagecho_parentheses_patterns')
                 \ '*.rb',
                 \ '*.vim',
                 \ ]
+endif
+
+
+if !exists('g:ttagecho_char_rx')
+    " Regexps to match keyword characters (in case you don't want to 
+    " change iskeyword.
+    " :read: let g:ttagecho_char_rx = {} "{{{2
+    let g:ttagecho_char_rx = {
+                \ 'vim': '\(\w\|#\)',
+                \ }
 endif
 
 
@@ -83,11 +93,13 @@ augroup TTagecho
     if exists('loaded_hookcursormoved')
         for s:pattern in g:ttagecho_parentheses_patterns
             exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' call hookcursormoved#Register("parenthesis_round_open", "ttagecho#OverParanthesis")'
+            exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' call hookcursormoved#Register("parenthesis_round_close", "ttagecho#OverParanthesis")'
             exec 'autocmd InsertLeave '. s:pattern .' if g:ttagecho_restore_showmode == 1 | set showmode | echo | endif'
         endfor
         if has('balloon_eval')
             for s:pattern in g:ttagecho_balloon_patterns
-                exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' set ballooneval bexpr=ttagecho#Balloon()'
+                exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' if &bexpr != "ttagecho#Balloon()" | let b:ttagecho_bexpr = &bexpr | endif'
+                exec 'autocmd BufNewFile,BufReadPost,FileType '. s:pattern .' setlocal ballooneval bexpr=ttagecho#Balloon()'
             endfor
         endif
         unlet s:pattern
@@ -140,5 +152,10 @@ instead)
 
 0.5
 - Make sure tlib is loaded even if it is installed in a different rtp-directory (thanks to ... sorry, cannot find the e-mail)
-- User tlib#notify#TrimMessage() (thanks to Erik Falor)
+- Use tlib#notify#TrimMessage() (thanks to Erik Falor)
+
+0.6
+- NEW: g:ttagecho_char_rx: custom keyword char regexp
+- Always use compact style when there is only one tag that matches and if many_lines < 0
+- Find the right keyword, when the current line contains more than one
 
